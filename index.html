@@ -5,7 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="styles.css" />
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
   </head>
-  <body></body>
+  <body>
+    <div class="main-container">
+      <div class="quiz-container">
+        <div id="current-question"></div>
+        <div id="current-answer"></div>
+        <div id="current-score"></div>
+      </div>
+      <div class="buttons-container">
+        <button id="start-game-btn">Start Game</button>
+        <button id="next-question-btn">Next question</button>
+      </div>
+    </div>
+  </body>
 </html>
