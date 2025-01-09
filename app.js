@@ -1,3 +1,6 @@
+//add categories to choose from.
+//randomize answers
+
 let questions = [];
 let currentIndex = 0;
 let score = 0;
@@ -8,6 +11,7 @@ const currentQuestion = document.getElementById("current-question");
 const currentAnswer = document.getElementById("current-answer");
 const currentIncorrectAnswer = document.getElementById("incorrect-answers");
 const currentScore = document.getElementById("current-score");
+const incorrectAnswers = document.getElementById("incorrect-answers");
 
 startBtn.addEventListener("click", async function getQuestions() {
   const url =
@@ -16,17 +20,19 @@ startBtn.addEventListener("click", async function getQuestions() {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Error getting questions");
-
+    console.log;
     const questionsData = await response.json();
+
     questions = questionsData.results;
+    console.log(questions);
     currentQuestion.innerHTML = questions[currentIndex].question;
     console.log(questions[currentIndex].question);
     currentAnswer.innerHTML = questions[currentIndex].correct_answer;
     console.log(questions[currentIndex].correct_answer);
+    incorrectAnswers.innerHTML = questions[currentIndex].incorrect_answers
+      .map((answer) => `<div class="incorrect-answer">${answer}</div>`)
+      .join("");
     currentIndex++;
-
-    questions = questionsData.results;
-    answers = questionsData.results[currentIndex].correct_answer;
   } catch (error) {
     console.error("Error fetching questions:", error);
   }
@@ -39,6 +45,9 @@ function displayNext() {
     currentAnswer.innerHTML = questions[currentIndex].correct_answer;
     console.log("Question:", questions[currentIndex].question);
     console.log("Answer:", questions[currentIndex].correct_answer);
+    incorrectAnswers.innerHTML = questions[currentIndex].incorrect_answers
+      .map((answer) => `<div class="incorrect-answer">${answer}</div>`)
+      .join("");
     currentIndex++;
   } else {
     console.log("No more questions!");
