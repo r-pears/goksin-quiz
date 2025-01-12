@@ -1,6 +1,3 @@
-//add categories to choose from.
-//randomize answers
-
 let questions = [];
 let currentIndex = 0;
 let score = 0;
@@ -12,46 +9,84 @@ const currentAnswer = document.getElementById("current-answer");
 const currentIncorrectAnswer = document.getElementById("incorrect-answers");
 const currentScore = document.getElementById("current-score");
 const incorrectAnswers = document.getElementById("incorrect-answers");
+const generalKnowledgeBtn = document.getElementById("general-knowledge-btn");
+const booksBtn = document.getElementById("books-btn");
+const moviesBtn = document.getElementById("movies-btn");
+const historyBtn = document.getElementById("history-btn");
 
-startBtn.addEventListener("click", async function getQuestions() {
+startBtn.addEventListener("click", async function beginGame() {
+  await getQuestions();
+  displayNext();
+});
+
+async function getQuestions() {
   const url =
     "https://opentdb.com/api.php?amount=15&category=9&difficulty=medium&type=multiple";
 
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Error getting questions");
-    console.log;
-    const questionsData = await response.json();
 
-    questions = questionsData.results;
-    console.log(questions);
-    currentQuestion.innerHTML = questions[currentIndex].question;
-    console.log(questions[currentIndex].question);
-    currentAnswer.innerHTML = questions[currentIndex].correct_answer;
-    console.log(questions[currentIndex].correct_answer);
-    incorrectAnswers.innerHTML = questions[currentIndex].incorrect_answers
-      .map((answer) => `<div class="incorrect-answer">${answer}</div>`)
-      .join("");
-    currentIndex++;
+    const questionsData = await response.json();
+    questions = questionsData.results; // Store questions
+    console.log("Questions fetched:", questions);
   } catch (error) {
     console.error("Error fetching questions:", error);
   }
-});
+}
+
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
 
 function displayNext() {
+  // Combine correct and incorrect answers
+  const allAnswers = [
+    questions[currentIndex].correct_answer,
+    ...questions[currentIndex].incorrect_answers,
+  ];
+
+  // Shuffle answers
+  shuffle(allAnswers);
+
   if (currentIndex < questions.length) {
     currentAnswer.classList.remove("clicked");
     currentQuestion.innerHTML = questions[currentIndex].question;
-    currentAnswer.innerHTML = questions[currentIndex].correct_answer;
     console.log("Question:", questions[currentIndex].question);
     console.log("Answer:", questions[currentIndex].correct_answer);
-    incorrectAnswers.innerHTML = questions[currentIndex].incorrect_answers
-      .map((answer) => `<div class="incorrect-answer">${answer}</div>`)
+
+    // Display shuffled answers
+    incorrectAnswers.innerHTML = allAnswers
+      .map(
+        (answer) => `
+          <div class="answer" data-correct="${
+            answer === questions[currentIndex].correct_answer
+          }">
+            ${answer}
+          </div>`
+      )
       .join("");
     currentIndex++;
   } else {
     console.log("No more questions!");
   }
+  shuffle(allAnswers);
 }
 
 currentAnswer.addEventListener("click", function () {
@@ -131,5 +166,5 @@ function displayNext() {
     }
   });
 }
- */
+*/
 nextBtn.addEventListener("click", displayNext);
