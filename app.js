@@ -39,13 +39,10 @@ function shuffle(array) {
   let currentIndex = array.length,
     randomIndex;
 
-  // While there remain elements to shuffle.
   while (currentIndex != 0) {
-    // Pick a remaining element.
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
-    // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [
       array[randomIndex],
       array[currentIndex],
@@ -56,13 +53,11 @@ function shuffle(array) {
 }
 
 function displayNext() {
-  // Combine correct and incorrect answers
   const allAnswers = [
     questions[currentIndex].correct_answer,
     ...questions[currentIndex].incorrect_answers,
   ];
 
-  // Shuffle answers
   shuffle(allAnswers);
 
   if (currentIndex < questions.length) {
@@ -71,7 +66,6 @@ function displayNext() {
     console.log("Question:", questions[currentIndex].question);
     console.log("Answer:", questions[currentIndex].correct_answer);
 
-    // Display shuffled answers
     incorrectAnswers.innerHTML = allAnswers
       .map(
         (answer) => `
@@ -82,15 +76,29 @@ function displayNext() {
           </div>`
       )
       .join("");
+
+    const answerElements = document.querySelectorAll(".answer");
+    answerElements.forEach((answerElement) => {
+      answerElement.addEventListener("click", function () {
+        const isCorrect = answerElement.dataset.correct === "true";
+
+        if (isCorrect) {
+          score++;
+          currentScore.innerHTML = `Score: ${score}`; // Update score display
+          console.log("Correct! Score is now:", score);
+        } else {
+          console.log("Wrong answer!");
+        }
+      });
+    });
+
     currentIndex++;
   } else {
     console.log("No more questions!");
   }
-  shuffle(allAnswers);
 }
 
 currentAnswer.addEventListener("click", function () {
-  // Check if already clicked
   if (!currentAnswer.classList.contains("clicked")) {
     currentAnswer.classList.add("clicked"); // Mark as clicked
     score++; // Increment score
@@ -99,72 +107,4 @@ currentAnswer.addEventListener("click", function () {
   }
 });
 
-nextBtn.addEventListener("click", displayNext);
-
-/* 
-const mockQuestions = {
-  results: [
-    {
-      question: "What is the capital of France?",
-      correct_answer: "Paris",
-      incorrect_answers: ["London", "Berlin", "Madrid"],
-    },
-    {
-      question: "Which planet is known as the Red Planet?",
-      correct_answer: "Mars",
-      incorrect_answers: ["Earth", "Jupiter", "Venus"],
-    },
-    {
-      question: "43",
-      correct_answer: "343",
-      incorrect_answers: ["Earth", "Jupiter", "Venus"],
-    },
-  ],
-};
-
-async function getMockQuestions() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockQuestions); // Simulate API delay
-    }, 1000);
-  });
-}
-
-startBtn.addEventListener("click", async function getQuestions() {
-  try {
-    const questionsData = await getMockQuestions();
-
-    questions = questionsData.results;
-    currentQuestion.innerHTML = questions[currentIndex].question;
-    currentAnswer.innerHTML = questions[currentIndex].correct_answer;
-    currentIndex++;
-
-    console.log("Questions Array (Mocked):", questions);
-  } catch (error) {
-    console.error("Error fetching questions:", error);
-  }
-});
-
-function displayNext() {
-  if (currentIndex < questions.length) {
-    currentQuestion.innerHTML = questions[currentIndex].question;
-    currentAnswer.innerHTML = questions[currentIndex].correct_answer;
-    console.log("Question:", questions[currentIndex].question);
-    console.log("Answer:", questions[currentIndex].correct_answer);
-    currentIndex++;
-  } else {
-    console.log("No more questions!");
-  }
-
-  currentAnswer.addEventListener("click", function () {
-    // Check if already clicked
-    if (!currentAnswer.classList.contains("clicked")) {
-      currentAnswer.classList.add("clicked"); // Mark as clicked
-      score++; // Increment score
-      console.log("Score:", score);
-      currentScore.innerHTML = `Score: ${score}`; // Update the score display
-    }
-  });
-}
-*/
 nextBtn.addEventListener("click", displayNext);
