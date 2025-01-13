@@ -5,10 +5,9 @@ let score = 0;
 const startBtn = document.getElementById("start-game-btn");
 const nextBtn = document.getElementById("next-question-btn");
 const currentQuestion = document.getElementById("current-question");
-const currentAnswer = document.getElementById("current-answer");
-const currentIncorrectAnswer = document.getElementById("incorrect-answers");
+const correctAnswer = document.getElementById("correct-answer");
 const currentScore = document.getElementById("current-score");
-const incorrectAnswers = document.getElementById("incorrect-answers");
+const answersContainer = document.getElementById("answers");
 const generalKnowledgeBtn = document.getElementById("general-knowledge-btn");
 const booksBtn = document.getElementById("books-btn");
 const moviesBtn = document.getElementById("movies-btn");
@@ -61,12 +60,12 @@ function displayNext() {
   shuffle(allAnswers);
 
   if (currentIndex < questions.length) {
-    currentAnswer.classList.remove("clicked");
+    correctAnswer.classList.remove("clicked");
     currentQuestion.innerHTML = questions[currentIndex].question;
     console.log("Question:", questions[currentIndex].question);
     console.log("Answer:", questions[currentIndex].correct_answer);
 
-    incorrectAnswers.innerHTML = allAnswers
+    answersContainer.innerHTML = allAnswers
       .map(
         (answer) => `
           <div class="answer" data-correct="${
@@ -98,9 +97,9 @@ function displayNext() {
   }
 }
 
-currentAnswer.addEventListener("click", function () {
-  if (!currentAnswer.classList.contains("clicked")) {
-    currentAnswer.classList.add("clicked"); // Mark as clicked
+correctAnswer.addEventListener("click", function () {
+  if (!correctAnswer.classList.contains("clicked")) {
+    correctAnswer.classList.add("clicked"); // Mark as clicked
     score++; // Increment score
     console.log("Score:", score);
     currentScore.innerHTML = `Score: ${score}`; // Update the score display
