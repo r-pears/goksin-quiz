@@ -85,9 +85,12 @@ function displayNext() {
           score++;
           currentScore.innerHTML = `Score: ${score}`; // Update score display
           console.log("Correct! Score is now:", score);
+          answerElement.style.color = "green"; // Show correct answer in green
         } else {
           console.log("Wrong answer!");
+          answerElement.style.color = "red"; // Show incorrect answer in orange
         }
+        answerElements.forEach((el) => (el.style.pointerEvents = "none"));
       });
     });
 
