@@ -12,22 +12,28 @@ const generalKnowledgeBtn = document.getElementById("general-knowledge-btn");
 const booksBtn = document.getElementById("books-btn");
 const moviesBtn = document.getElementById("movies-btn");
 const historyBtn = document.getElementById("history-btn");
+const progressBar = document.getElementById("progress-bar");
+const finalScoreDisplay = document.getElementById("final-score");
 
 startBtn.addEventListener("click", async function beginGame() {
+  currentIndex = 0;
+  score = 0;
   await getQuestions();
+  updateProgress();
   displayNext();
+  finalScoreDisplay.style.display = "none";
 });
 
 async function getQuestions() {
   const url =
-    "https://opentdb.com/api.php?amount=15&category=9&difficulty=medium&type=multiple";
+    "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple";
 
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Error getting questions");
 
     const questionsData = await response.json();
-    questions = questionsData.results; // Store questions
+    questions = questionsData.results;
     console.log("Questions fetched:", questions);
   } catch (error) {
     console.error("Error fetching questions:", error);
@@ -52,6 +58,11 @@ function shuffle(array) {
 }
 
 function displayNext() {
+  if (currentIndex >= questions.length) {
+    displayFinalScore();
+    return;
+  }
+
   const allAnswers = [
     questions[currentIndex].correct_answer,
     ...questions[currentIndex].incorrect_answers,
@@ -59,54 +70,48 @@ function displayNext() {
 
   shuffle(allAnswers);
 
-  if (currentIndex < questions.length) {
-    correctAnswer.classList.remove("clicked");
-    currentQuestion.innerHTML = questions[currentIndex].question;
-    console.log("Question:", questions[currentIndex].question);
-    console.log("Answer:", questions[currentIndex].correct_answer);
+  currentQuestion.innerHTML = questions[currentIndex].question;
 
-    answersContainer.innerHTML = allAnswers
-      .map(
-        (answer) => `
-          <div class="answer" data-correct="${
-            answer === questions[currentIndex].correct_answer
-          }">
-            ${answer}
-          </div>`
-      )
-      .join("");
+  answersContainer.innerHTML = allAnswers
+    .map(
+      (answer) => `
+        <div class="answer" data-correct="${
+          answer === questions[currentIndex].correct_answer
+        }">
+          ${answer}
+        </div>`
+    )
+    .join("");
 
-    const answerElements = document.querySelectorAll(".answer");
-    answerElements.forEach((answerElement) => {
-      answerElement.addEventListener("click", function () {
-        const isCorrect = answerElement.dataset.correct === "true";
+  const answerElements = document.querySelectorAll(".answer");
+  answerElements.forEach((answerElement) => {
+    answerElement.addEventListener("click", function () {
+      const isCorrect = answerElement.dataset.correct === "true";
 
-        if (isCorrect) {
-          score++;
-          currentScore.innerHTML = `Score: ${score}`; // Update score display
-          console.log("Correct! Score is now:", score);
-          answerElement.style.color = "green"; // Show correct answer in green
-        } else {
-          console.log("Wrong answer!");
-          answerElement.style.color = "red"; // Show incorrect answer in orange
-        }
-        answerElements.forEach((el) => (el.style.pointerEvents = "none"));
-      });
+      if (isCorrect) {
+        score++;
+        currentScore.innerHTML = `Score: ${score}`;
+        answerElement.style.color = "green";
+      } else {
+        answerElement.style.color = "red";
+      }
+      answerElements.forEach((el) => (el.style.pointerEvents = "none"));
     });
+  });
 
-    currentIndex++;
-  } else {
-    console.log("No more questions!");
-  }
+  currentIndex++;
+  updateProgress();
 }
 
-correctAnswer.addEventListener("click", function () {
-  if (!correctAnswer.classList.contains("clicked")) {
-    correctAnswer.classList.add("clicked"); // Mark as clicked
-    score++; // Increment score
-    console.log("Score:", score);
-    currentScore.innerHTML = `Score: ${score}`; // Update the score display
-  }
-});
+function updateProgress() {
+  const progressPercent = ((currentIndex / questions.length) * 100).toFixed(0);
+  progressBar.style.width = `${progressPercent}%`;
+  progressBar.innerText = `${progressPercent}%`;
+}
+
+function displayFinalScore() {
+  finalScoreDisplay.style.display = "block";
+  finalScoreDisplay.innerHTML = `<h2>Final Score: ${score} / ${questions.length}</h2>`;
+}
 
 nextBtn.addEventListener("click", displayNext);

@@ -94,8 +94,38 @@ button:hover {
 }
 
 #current-score {
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  margin-top: 10px;
+  margin: 10px 0 10px 0;
   color: #333;
+}
+
+#progress-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  background-color: #ddd;
+  height: 20px;
+  margin-bottom: 30px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 100%;
+  padding: 20px;
+  background-color: #4caf50;
+  text-align: center;
+  color: white;
+  line-height: 20px;
+  white-space: nowrap;
+  width: 0%;
+}
+
+#final-score {
+  display: none;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
 }
