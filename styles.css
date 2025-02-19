@@ -88,11 +88,6 @@ button:hover {
   color: #333;
 }
 
-.category-buttons button:hover {
-  background: #4facfe;
-  color: #fff;
-}
-
 #current-score {
   font-size: 1.5rem;
   font-weight: bold;
@@ -128,4 +123,21 @@ button:hover {
   margin-top: 20px;
   font-size: 18px;
   font-weight: bold;
+}
+
+.category-buttons button {
+  background-color: #ccc;
+  color: dimgray;
+}
+.category-buttons button hover {
+  background-color: #ccc;
+  cursor: default;
+  color: dimgray;
+}
+
+.game-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

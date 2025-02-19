@@ -5,23 +5,26 @@ let score = 0;
 const startBtn = document.getElementById("start-game-btn");
 const nextBtn = document.getElementById("next-question-btn");
 const currentQuestion = document.getElementById("current-question");
-const correctAnswer = document.getElementById("correct-answer");
 const currentScore = document.getElementById("current-score");
 const answersContainer = document.getElementById("answers");
-const generalKnowledgeBtn = document.getElementById("general-knowledge-btn");
-const booksBtn = document.getElementById("books-btn");
-const moviesBtn = document.getElementById("movies-btn");
-const historyBtn = document.getElementById("history-btn");
 const progressBar = document.getElementById("progress-bar");
 const finalScoreDisplay = document.getElementById("final-score");
+
+nextBtn.style.visibility = "hidden"; // Hide Next button initially
 
 startBtn.addEventListener("click", async function beginGame() {
   currentIndex = 0;
   score = 0;
+
+  currentScore.style.display = "none"; // Hide live score
+  finalScoreDisplay.style.display = "none"; // Hide final score
+
+  nextBtn.style.visibility = "visible";
+  nextBtn.disabled = true;
+
   await getQuestions();
   updateProgress();
   displayNext();
-  finalScoreDisplay.style.display = "none";
 });
 
 async function getQuestions() {
@@ -60,23 +63,24 @@ function shuffle(array) {
 function displayNext() {
   if (currentIndex >= questions.length) {
     displayFinalScore();
+    nextBtn.style.visibility = "hidden";
     return;
   }
 
-  const allAnswers = [
-    questions[currentIndex].correct_answer,
-    ...questions[currentIndex].incorrect_answers,
-  ];
+  nextBtn.disabled = true;
 
+  const currentQ = questions[currentIndex];
+
+  const allAnswers = [currentQ.correct_answer, ...currentQ.incorrect_answers];
   shuffle(allAnswers);
 
-  currentQuestion.innerHTML = questions[currentIndex].question;
+  currentQuestion.innerHTML = currentQ.question;
 
   answersContainer.innerHTML = allAnswers
     .map(
       (answer) => `
         <div class="answer" data-correct="${
-          answer === questions[currentIndex].correct_answer
+          answer === currentQ.correct_answer
         }">
           ${answer}
         </div>`
@@ -86,20 +90,22 @@ function displayNext() {
   const answerElements = document.querySelectorAll(".answer");
   answerElements.forEach((answerElement) => {
     answerElement.addEventListener("click", function () {
-      const isCorrect = answerElement.dataset.correct === "true";
+      if (nextBtn.disabled) {
+        const isCorrect = answerElement.dataset.correct === "true";
 
-      if (isCorrect) {
-        score++;
-        currentScore.innerHTML = `Score: ${score}`;
-        answerElement.style.color = "green";
-      } else {
-        answerElement.style.color = "red";
+        if (isCorrect) {
+          score++;
+          answerElement.style.color = "green";
+        } else {
+          answerElement.style.color = "red";
+        }
+
+        answerElements.forEach((el) => (el.style.pointerEvents = "none"));
+        nextBtn.disabled = false;
       }
-      answerElements.forEach((el) => (el.style.pointerEvents = "none"));
     });
   });
 
-  currentIndex++;
   updateProgress();
 }
 
@@ -110,8 +116,14 @@ function updateProgress() {
 }
 
 function displayFinalScore() {
+  currentScore.style.display = "block"; // Show score at the end
   finalScoreDisplay.style.display = "block";
   finalScoreDisplay.innerHTML = `<h2>Final Score: ${score} / ${questions.length}</h2>`;
 }
 
-nextBtn.addEventListener("click", displayNext);
+nextBtn.addEventListener("click", function () {
+  if (!nextBtn.disabled) {
+    currentIndex++;
+    displayNext();
+  }
+});
