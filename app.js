@@ -43,23 +43,6 @@ async function getQuestions() {
   }
 }
 
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  while (currentIndex != 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
-}
-
 function displayNext() {
   if (currentIndex >= questions.length) {
     displayFinalScore();
@@ -116,8 +99,8 @@ function updateProgress() {
 }
 
 function displayFinalScore() {
-  currentScore.style.display = "block"; // Show score at the end
-  finalScoreDisplay.style.display = "block";
+  toggleVisibility(currentScore, true);
+  toggleVisibility(finalScoreDisplay, true);
   finalScoreDisplay.innerHTML = `<h2>Final Score: ${score} / ${questions.length}</h2>`;
 }
 
@@ -127,3 +110,26 @@ nextBtn.addEventListener("click", function () {
     displayNext();
   }
 });
+
+// moved utility functions to the bottom
+function shuffle(array) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+}
+
+// utility: Toggle visibility of an element
+function toggleVisibility(element, isVisible) {
+  element.style.display = isVisible ? "block" : "none";
+}
